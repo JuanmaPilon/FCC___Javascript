@@ -10,6 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import logica.Actividad;
 import logica.Categoria;
+import logica.Compra;
 import logica.DTActividad;
 import logica.DTSalidaTuristica;
 import logica.DTTurista;
@@ -22,6 +23,7 @@ import logica.Usuario;
 import logica.ImagenPerfil;
 import logica.SalidaTuristica;
 import logica.Paquete;
+import logica.imagenActividad;
 import persistencia.exceptions.CorreoElectronicoExistenteException;
 import persistencia.exceptions.NicknameExistenteException;
 import persistencia.exceptions.NonexistentEntityException;
@@ -38,6 +40,8 @@ public class ControladoraPersistencia {
     CategoriaJpaController categoriaJpa = new CategoriaJpaController();
     InscripcionJpaController inscripcionJpa = new InscripcionJpaController();
     ImagenPerfilJpaController imagenPerfilJpa = new ImagenPerfilJpaController();
+    imagenActividadJpaController imagenActividadJpa = new imagenActividadJpaController();
+    CompraJpaController compraJpa = new CompraJpaController();
     
     //Consultas
     public SalidaTuristica consultaSalida(String nombreSalida){
@@ -72,12 +76,12 @@ public class ControladoraPersistencia {
     }
  
      public ArrayList<String> listaDeptos(){
-    ArrayList<String> nicks = new ArrayList<String>();
+    ArrayList<String> nicks = new ArrayList();
   
     try {
         List<Departamento> deptos = departamentoJpa.findDepartamentoEntities();
-        for (int i = 0; i < deptos.size(); i++) {
-            nicks.add(deptos.get(i).getNombre());
+        for (Departamento d: deptos) {
+            nicks.add(d.getNombre());
         }
     }catch(Exception ex){
             Logger.getLogger(ControladoraPersistencia.class.getName()).log(Level.SEVERE, null, ex);
@@ -187,13 +191,13 @@ public class ControladoraPersistencia {
 
 public ArrayList<DTUsuario> traerProveedores() {
 
-    ArrayList<DTUsuario> listaDTUsuario = new ArrayList<DTUsuario>();
+    ArrayList<DTUsuario> listaDTUsuario = new ArrayList();
     try {
         List<Proveedor> proveedores = proveedorJpa.findProveedorEntities();
         for (Proveedor p : proveedores) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             String fnac = sdf.format(p.getfNacimiento());
-            DTUsuario dtusuario = new DTUsuario(p.getNickname(), p.getNombre(), p.getApellido(), p.getCorreo(), fnac);
+            DTUsuario dtusuario = new DTUsuario(p.getNickname(), p.getNombre(), p.getApellido(), p.getCorreo(), fnac, p.getContrasenia());
             listaDTUsuario.add(dtusuario);
         }
     } catch (Exception ex) {
@@ -214,7 +218,7 @@ public ArrayList<DTUsuario> traerUsuarios(){
         for (Turista t : turistas) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             String fnac = sdf.format(t.getfNacimiento());
-            DTUsuario dtusuario = new DTUsuario(t.getNickname(), t.getNombre(), t.getApellido(), t.getCorreo(), fnac );
+            DTUsuario dtusuario = new DTUsuario(t.getNickname(), t.getNombre(), t.getApellido(), t.getCorreo(), fnac , t.getContrasenia());
             listaDTUsuario.add(dtusuario);
         }
     }catch(Exception ex){
@@ -225,7 +229,7 @@ public ArrayList<DTUsuario> traerUsuarios(){
         for (Proveedor p : proveedores) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             String fnac = sdf.format(p.getfNacimiento());
-            DTUsuario dtusuario = new DTUsuario(p.getNickname(), p.getNombre(), p.getApellido(), p.getCorreo(), fnac );
+            DTUsuario dtusuario = new DTUsuario(p.getNickname(), p.getNombre(), p.getApellido(), p.getCorreo(), fnac, p.getContrasenia() );
             listaDTUsuario.add(dtusuario);
         }
     }catch(Exception ex){
@@ -453,19 +457,28 @@ public ArrayList<DTUsuario> traerUsuarios(){
         return actividadJpa.findActividadEntities();
     }
     
-     public void guardarImagenPerfil(ImagenPerfil imagenPerfil) throws PreexistingEntityException, Exception{
+      public void guardarImagenPerfil(ImagenPerfil imagenPerfil) throws PreexistingEntityException, Exception{
            try{
                 imagenPerfilJpa.create(imagenPerfil);
            } catch (PreexistingEntityException e){
                throw new PreexistingEntityException("Nombre de la imagen ya en uso por otro usuario");
            }
-                
-             
+                       
+        }
+     
+     public void guardarImagenActividad(imagenActividad imagenActividad) throws PreexistingEntityException, Exception{
+           try{
+                imagenActividadJpa.create(imagenActividad);
+           } catch (PreexistingEntityException e){
+               throw new PreexistingEntityException("Nombre de la imagen ya en uso por otra actividad");
+           }
+                       
         }
      
      public ImagenPerfil buscarImagen(String nickname){
              return  imagenPerfilJpa.findImagenPerfilByNickname(nickname);
     }
+     
 
     public void guardarCategoria(Categoria cat) throws PreexistingEntityException, Exception {
         try {
@@ -511,5 +524,28 @@ public ArrayList<DTUsuario> traerUsuarios(){
      
        
     }
+
+    public void modificarActividad(Actividad a) {
+        try {
+            actividadJpa.edit(a);
+        } catch (Exception ex) {
+            Logger.getLogger(ControladoraPersistencia.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public List<Departamento> traerDepartamentos() {
+        return departamentoJpa.findDepartamentoEntities();
+ }
+
+    public void guardarCompra(Compra c) {
+        compraJpa.create(c);
+ }
+
+    public List<Compra> listarCompras() {
+        return compraJpa.findCompraEntities();
+   }
+
+    
+    
     
 }//fin

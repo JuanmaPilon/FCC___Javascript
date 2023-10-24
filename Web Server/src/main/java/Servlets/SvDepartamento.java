@@ -4,7 +4,6 @@
  */
 package Servlets;
 
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -14,8 +13,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import logica.Controlador;
 import logica.Departamento;
+import logica.Fabrica;
+import logica.IControlador;
 
 /**
  *
@@ -23,39 +23,41 @@ import logica.Departamento;
  */
 @WebServlet(name = "SvDepartamento", urlPatterns = {"/SvDepartamento"})
 public class SvDepartamento extends HttpServlet {
-     Controlador control = Controlador.getInstance();
+    
+    Fabrica fabrica = Fabrica.getInstance();
+    IControlador control = fabrica.getIControlador();
+    
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-       
+
     }
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ArrayList<Departamento> listaDepartamentos = control.listaDepartamentos();
+        List<Departamento> listaDepartamentos = control.listaDepartamentos();
         ArrayList<String> nombresDepartamentos = new ArrayList<>();
-
         for (Departamento departamento : listaDepartamentos) {
             nombresDepartamentos.add(departamento.getNombre());
         }
 
-        String nombresDepartamentosJson = new Gson().toJson(nombresDepartamentos);
-
-        response.setContentType("application/json");
+        String departamentos = String.join(",", nombresDepartamentos);
+        response.setContentType("text/plain");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(nombresDepartamentosJson);
+        response.getWriter().write(departamentos);
 
     }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
+        processRequest(request, response);
     }
 
-
+   
     @Override
     public String getServletInfo() {
         return "Short description";

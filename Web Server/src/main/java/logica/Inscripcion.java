@@ -10,10 +10,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import logica.TipoPago;
 
 @Entity
 public class Inscripcion implements Serializable{ 
-    @Id @GeneratedValue
+    @Id 
+    @GeneratedValue
     private Long id;
     @ManyToOne
     @JoinColumn(name="TURISTA_NICKNAME")
@@ -25,16 +27,26 @@ public class Inscripcion implements Serializable{
     private Date fInscripcion;
     private int cantTurista;
     private float costo;
+    private TipoPago tipoPago;
+
+    public void setTipoPago(TipoPago tipoPago) {
+        this.tipoPago = tipoPago;
+    }
+
+    public TipoPago getTipoPago() {
+        return tipoPago;
+    }
 
     public Inscripcion() {
     }
 
-    public Inscripcion(Turista turista, SalidaTuristica salida, Date fInscripcion, int cantTurista, float costo) {
+    public Inscripcion(Turista turista, SalidaTuristica salida, Date fInscripcion, int cantTurista, float costo, TipoPago tipoPago) {
         this.turista = turista;
         this.salida = salida;
         this.fInscripcion = fInscripcion;
         this.cantTurista = cantTurista;
         this.costo = costo;
+        this.tipoPago = tipoPago;
     }
 
     public Long getId() {
