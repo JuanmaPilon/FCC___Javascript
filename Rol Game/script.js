@@ -70,6 +70,18 @@ const locations = [
         "button functions": [goTown, goTown, goTown],
         text: 'The monster screams "Arg!" as it dies. You gain experience points and find gold.'
     },
+    {
+        name: "lose",
+        "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
+        "button functions": [restart, restart, restart],
+        text: "You die. ☠️"
+    },
+    { 
+        name: "win", 
+        "button text": ["REPLAY?", "REPLAY?", "REPLAY?"], 
+        "button functions": [restart, restart, restart], 
+        text: "You defeat the dragon! YOU WIN THE GAME! 🎉" 
+    }
 ];
 
 // initialize buttons
@@ -169,15 +181,33 @@ function goFight() {
 function attack() {
   text.innerText = "The " + monsters[fighting].name + " attacks.";
   text.innerText += " You attack it with your " + weapons[currentWeapon].name + ".";
-  health -= monsters[fighting].level;
-  monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;
+  health -= getMonsterAttackValue(monsters[fighting].level);
+  if (isMonsterHit()) {
+    monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;    
+  } else {
+    text.innerText += " You miss.";
+  }
   healthText.innerText = health;
   monsterHealthText.innerText = monsterHealth;
   if (health <= 0) {
     lose();
   } else if (monsterHealth <= 0) {
-    defeatMonster();
+    fighting === 2 ? winGame() : defeatMonster();
   }
+  if (Math.random() <= .1) {
+    text.innerText += " Your " + inventory.pop() + " breaks.";
+    currentWeapon--;
+  }
+}
+
+function getMonsterAttackValue(level) {
+  const hit = (level * 5) - (Math.floor(Math.random() * xp));
+  console.log(hit);
+  return hit > 0 ? hit : 0;
+}
+
+function isMonsterHit() {
+  return Math.random() > .2 || health < 20;
 }
 
 function dodge() {
@@ -196,3 +226,18 @@ function lose() {
   update(locations[5]);
 }
 
+function winGame() {
+  update(locations[6]);
+}
+
+function restart() {
+  xp = 0;
+  health = 100;
+  gold = 50;
+  currentWeapon = 0;
+  inventory = ["stick"];
+  goldText.innerText = gold;
+  healthText.innerText = health;
+  xpText.innerText = xp;
+  goTown();
+}
