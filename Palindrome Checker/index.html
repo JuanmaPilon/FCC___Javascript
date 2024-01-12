@@ -4,17 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Palindrome Checker</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
- <input id="text-input">
-</input>
-<button id="check-btn">Check</button>
-<div id="result">Result: </div>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="text-input">Enter Text:</label>
+                    <input type="text" class="form-control" id="text-input">
+                </div>
+                <button class="btn btn-primary" id="check-btn">Check</button>
+                <div class="mt-3" id="result">Result: </div>
+            </div>
+        </div>
+    </div>
 
-
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
-
 </html>
